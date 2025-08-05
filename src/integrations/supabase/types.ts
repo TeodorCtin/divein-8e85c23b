@@ -20,8 +20,13 @@ export type Database = {
           cover_letter: string | null
           created_at: string
           cv_url: string | null
+          email: string | null
           id: string
+          link_social: string | null
+          mesaj: string | null
+          nume: string | null
           opportunity_id: string
+          prenume: string | null
           status: string | null
           updated_at: string
         }
@@ -30,8 +35,13 @@ export type Database = {
           cover_letter?: string | null
           created_at?: string
           cv_url?: string | null
+          email?: string | null
           id?: string
+          link_social?: string | null
+          mesaj?: string | null
+          nume?: string | null
           opportunity_id: string
+          prenume?: string | null
           status?: string | null
           updated_at?: string
         }
@@ -40,8 +50,13 @@ export type Database = {
           cover_letter?: string | null
           created_at?: string
           cv_url?: string | null
+          email?: string | null
           id?: string
+          link_social?: string | null
+          mesaj?: string | null
+          nume?: string | null
           opportunity_id?: string
+          prenume?: string | null
           status?: string | null
           updated_at?: string
         }
@@ -137,12 +152,15 @@ export type Database = {
         Row: {
           author_id: string
           category: string
+          contact_email: string | null
           content: string | null
           created_at: string
+          data_oportunitate: string | null
           description: string
           expires_at: string | null
           id: string
           image_url: string | null
+          link_extern: string | null
           location: string | null
           salary_range: string | null
           status: string | null
@@ -154,12 +172,15 @@ export type Database = {
         Insert: {
           author_id: string
           category: string
+          contact_email?: string | null
           content?: string | null
           created_at?: string
+          data_oportunitate?: string | null
           description: string
           expires_at?: string | null
           id?: string
           image_url?: string | null
+          link_extern?: string | null
           location?: string | null
           salary_range?: string | null
           status?: string | null
@@ -171,12 +192,15 @@ export type Database = {
         Update: {
           author_id?: string
           category?: string
+          contact_email?: string | null
           content?: string | null
           created_at?: string
+          data_oportunitate?: string | null
           description?: string
           expires_at?: string | null
           id?: string
           image_url?: string | null
+          link_extern?: string | null
           location?: string | null
           salary_range?: string | null
           status?: string | null
@@ -184,6 +208,33 @@ export type Database = {
           title?: string
           type?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          nume_organizatie: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          nume_organizatie: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          nume_organizatie?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
