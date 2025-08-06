@@ -19,6 +19,7 @@ export default function AdaugaOportunitate() {
   
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -44,9 +45,18 @@ export default function AdaugaOportunitate() {
       if (error) throw error;
       
       const uniqueCategories = Array.from(new Set(data?.map(item => item.category) || []));
-      setCategories(uniqueCategories.sort());
+      
+      // Add default categories if no categories exist
+      const defaultCategories = ["IT", "Marketing", "Educație", "Sănătate", "Finanțe", "HR", "Vânzări", "Design"];
+      const allCategories = uniqueCategories.length > 0 
+        ? uniqueCategories 
+        : defaultCategories;
+      
+      setCategories(allCategories.sort());
     } catch (error) {
       console.error("Error fetching categories:", error);
+      // Set default categories in case of error
+      setCategories(["IT", "Marketing", "Educație", "Sănătate", "Finanțe", "HR", "Vânzări", "Design"]);
     }
   };
 
@@ -154,27 +164,56 @@ export default function AdaugaOportunitate() {
                   <Tag className="w-4 h-4" />
                   Categorie *
                 </Label>
-                {categories.length > 0 ? (
-                  <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selectează o categorie" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
+                
+                {!showCustomCategory ? (
+                  <div className="space-y-2">
+                    <Select 
+                      value={formData.category} 
+                      onValueChange={(value) => {
+                        if (value === "custom") {
+                          setShowCustomCategory(true);
+                          setFormData(prev => ({ ...prev, category: "" }));
+                        } else {
+                          setFormData(prev => ({ ...prev, category: value }));
+                        }
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selectează o categorie" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="custom">
+                          <span className="text-primary">+ Adaugă categorie nouă</span>
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 ) : (
-                  <Input
-                    id="category"
-                    value={formData.category}
-                    onChange={handleChange("category")}
-                    placeholder="Ex: Marketing, IT, Educație"
-                    required
-                  />
+                  <div className="space-y-2">
+                    <Input
+                      id="category"
+                      value={formData.category}
+                      onChange={handleChange("category")}
+                      placeholder="Introdu categoria nouă"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setShowCustomCategory(false);
+                        setFormData(prev => ({ ...prev, category: "" }));
+                      }}
+                    >
+                      Înapoi la categorii existente
+                    </Button>
+                  </div>
                 )}
               </div>
 
