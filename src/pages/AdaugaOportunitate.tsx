@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,6 +18,7 @@ export default function AdaugaOportunitate() {
   const { toast } = useToast();
   
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -25,6 +27,28 @@ export default function AdaugaOportunitate() {
     link_extern: "",
     location: ""
   });
+
+  // Fetch existing categories
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("opportunities")
+        .select("category")
+        .not("category", "is", null)
+        .neq("category", "");
+
+      if (error) throw error;
+      
+      const uniqueCategories = Array.from(new Set(data?.map(item => item.category) || []));
+      setCategories(uniqueCategories.sort());
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   // Redirect if not authenticated
   if (!authLoading && !user) {
@@ -130,18 +154,33 @@ export default function AdaugaOportunitate() {
                   <Tag className="w-4 h-4" />
                   Categorie *
                 </Label>
-                <Input
-                  id="category"
-                  value={formData.category}
-                  onChange={handleChange("category")}
-                  placeholder="Ex: Marketing, IT, Educație"
-                  required
-                />
+                {categories.length > 0 ? (
+                  <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selectează o categorie" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    id="category"
+                    value={formData.category}
+                    onChange={handleChange("category")}
+                    placeholder="Ex: Marketing, IT, Educație"
+                    required
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="expires_at" className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-4 h-4 text-foreground" />
                   Deadline
                 </Label>
                 <Input

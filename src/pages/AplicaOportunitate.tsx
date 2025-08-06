@@ -25,6 +25,7 @@ export default function AplicaOportunitate() {
   const [loading, setLoading] = useState(false);
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
   const [loadingOpportunity, setLoadingOpportunity] = useState(true);
+  const [applicationSubmitted, setApplicationSubmitted] = useState(false);
   
   const [formData, setFormData] = useState({
     nume: "",
@@ -84,6 +85,8 @@ export default function AplicaOportunitate() {
 
       if (error) throw error;
 
+      setApplicationSubmitted(true);
+      
       toast({
         title: "Succes!",
         description: "Aplicația ta a fost trimisă cu succes!"
@@ -146,12 +149,14 @@ export default function AplicaOportunitate() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">{opportunity.description}</p>
-            <Button variant="outline" size="sm" asChild>
-              <a href={opportunity.link_extern} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Vezi detaliile complete
-              </a>
-            </Button>
+            {applicationSubmitted && (
+              <Button variant="outline" size="sm" asChild>
+                <a href={opportunity.link_extern} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Vezi detaliile complete
+                </a>
+              </Button>
+            )}
           </CardContent>
         </Card>
 
